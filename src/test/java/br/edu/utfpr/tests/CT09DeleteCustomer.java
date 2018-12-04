@@ -38,8 +38,7 @@ public class CT09DeleteCustomer {
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);   
         driver.manage().window().maximize();
-        driver.get("http://192.168.15.9");
-        
+        HomePage home = new HomePage(driver);        
         LoginPage login = new LoginPage(driver); 
         login.setUsuario("teste").setSenha("utfpr").login();
         

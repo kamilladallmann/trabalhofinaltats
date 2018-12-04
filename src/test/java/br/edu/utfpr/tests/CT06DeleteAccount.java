@@ -18,7 +18,9 @@ import static junit.framework.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -26,6 +28,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
  *
  * @author kamil
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CT06DeleteAccount {
     private WebDriver driver;
     
@@ -40,8 +43,7 @@ public class CT06DeleteAccount {
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);   
         driver.manage().window().maximize();
-        driver.get("http://192.168.15.9");
-        
+        HomePage home = new HomePage(driver);        
         LoginPage login = new LoginPage(driver); 
         login.setUsuario("teste").setSenha("utfpr").login();
         
@@ -54,7 +56,49 @@ public class CT06DeleteAccount {
         
     
      @Test
-     public void testDeleteAccount(){
+    public void testCreateCategory(){
+        HomePage home = new HomePage(driver); 
+        ItemsPage items = home.getMenu().goToItems();
+        items
+                .addNovaCategoria()
+                .setNomeCategoria("Categoria1")
+                .setDescricaoCategoria("categoria 1 teste")
+                .salvarCategoria();
+     }
+     
+    @Test
+    public void testCreateCustomer(){
+        HomePage home = new HomePage(driver); 
+        ItemsPage items = home.getMenu().goToItems();
+        
+        CustomersPage customers = items.goToCustomer();
+        customers
+                .addNovoCustomer()
+                .setNomeCustomer("UTFPR")
+                .setDescricaoCustomer("UTFPR teste")
+                .salvaCustomer();
+     }
+     
+    @Test
+    public void testCreateNewAccount(){
+        
+        HomePage home = new HomePage(driver);      
+              
+        NewAccountPage account = home.getMenu().goToNewAccount();
+            account
+                    .setName("novaContaTeste")
+                    .setCustomer("UTFPR")
+                    .setCategory("Categoria1")
+                    .setUser("kamilladallmann")
+                    .setPass("user7890")
+                    .setPassAgain("user7890")
+                    .setData("05012019");                         
+        
+            assertTrue(account.OperacaoRealizadaComSucesso());
+    }
+    
+    @Test
+    public void testDeleteAccount(){
         HomePage home = new HomePage(driver); 
         ItemsPage items = home.getMenu().goToItems();
         AccountsPage acc = items.goToAccounts();
@@ -65,13 +109,10 @@ public class CT06DeleteAccount {
                 .abreOpcoes()
                 .deleteTudo()
                 .confirmaDeleta();
+        HomePage home2 = new HomePage(driver);
+        home2.
+                setSearch("nova");
+        assertTrue(home2.naoTemRegistro());
        
-     }
-     
-     @Test 
-     public void testDeleteAccountConfirm(){
-         HomePage home = new HomePage(driver);
-         home.setSearch("nova");
-         assertTrue(home.naoTemRegistro());
      }
 }
